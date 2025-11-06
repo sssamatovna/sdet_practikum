@@ -1,11 +1,7 @@
 import allure
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-from .base_page import BasePage
-from .locators import ManagerPageLocators
-
+from typing import List, Dict
+from sdet_practikum.pages.base_page import BasePage
+from sdet_practikum.pages.locators import ManagerPageLocators, CustomersLocators
 
 class ManagerPage(BasePage):
     path = "/angularJs-protractor/BankingProject/#/manager"
@@ -13,75 +9,57 @@ class ManagerPage(BasePage):
     def __init__(self, driver, base_url):
         super().__init__(driver, base_url, self.path)
 
+    # ---- Manager tab ----
     @allure.step("Нажать на кнопку 'Add Customer'")
-    def click_add_customer_button(self):
-        self.find_element(ManagerPageLocators.ADD_CUSTOMER_BUTTON).click()
+    def click_add_customer_button(self) -> None:
+        self.click_element(ManagerPageLocators.ADD_CUSTOMER_BUTTON)
 
-    @allure.step(
-        "Заполнить форму клиента: "
-        "Имя={first_name},"
-        "Фамилия={last_name},"
-        "Индекс={post_code}"
-    )
-    def fill_customer_form(self, first_name, last_name, post_code):
-        self.find_element(ManagerPageLocators.FIRST_NAME).send_keys(first_name)
-        self.find_element(ManagerPageLocators.LAST_NAME).send_keys(last_name)
-        self.find_element(ManagerPageLocators.POST_CODE).send_keys(post_code)
+    @allure.step("Заполнить форму клиента: {first_name} {last_name}, {post_code}")
+    def fill_customer_form(self, first_name: str, last_name: str, post_code: str) -> None:
+        self.fill_field(ManagerPageLocators.FIRST_NAME, first_name)
+        self.fill_field(ManagerPageLocators.LAST_NAME, last_name)
+        self.fill_field(ManagerPageLocators.POST_CODE, post_code)
 
-    @allure.step("Нажать 'Add Customer' для отправки формы")
-    def submit_customer_form(self):
-        self.find_element(ManagerPageLocators.SUBMIT_BUTTON).click()
+    @allure.step("Отправить форму 'Add Customer'")
+    def submit_customer_form(self) -> None:
+        self.click_element(ManagerPageLocators.SUBMIT_BUTTON)
 
-    @allure.step("Принять alert после добавления клиента")
-    def accept_alert(self):
-        alert = self.driver.switch_to.alert
-        alert_text = alert.text
-        alert.accept()
-        return alert_text
-
+    # ---- Customers tab ----
     @allure.step("Перейти на вкладку 'Customers'")
-    def go_to_customers_tab(self):
-        self.find_element(ManagerPageLocators.CUSTOMERS_BUTTON).click()
+    def go_to_customers_tab(self) -> None:
+        self.click_element(ManagerPageLocators.CUSTOMERS_BUTTON)
+        self.find_element(CustomersLocators.CUSTOMERS_TABLE)
 
-    @allure.step("Найти клиента по имени: {first_name}")
-    def find_customer_by_name(self, first_name):
-        self.find_element(ManagerPageLocators.SEARCH_INPUT).send_keys(first_name)
-        self.find_element(ManagerPageLocators.CUSTOMERS_TABLE)
+    @allure.step("Клик по заголовку First Name для сортировки")
+    def sort_by_first_name(self) -> None:
+        self.click_element(CustomersLocators.HEADER_FIRST_NAME)
 
-    @allure.step("Получить данные клиента из последней строки таблицы")
-    def get_customer_data_from_row(self):
-        # Переходим на вкладку с таблицей
-        self.go_to_customers_tab()
-        # Ждём появления хотя бы одной строки
-        WebDriverWait(self.driver, 12).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "tbody tr"))
-        )
-        # берём ПОСЛЕДНЮЮ строку — новый клиент добавляется в конец
-        last_row = self.driver.find_elements(By.CSS_SELECTOR, "tbody tr")[-1]
-        cells = last_row.find_elements(By.CSS_SELECTOR, "td")
+    @allure.step("Применить фильтр поиска по имени: {query}")
+    def search_customer(self, query: str) -> None:
+        self.fill_field(CustomersLocators.SEARCH_INPUT, query)
 
-        first_name = cells[0].text
-        last_name = cells[1].text
-        post_code = cells[2].text
+    @allure.step("Получить список имён из таблицы")
+    def get_all_first_names(self) -> List[str]:
+        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
+        names: List[str] = []
+        for r in rows:
+            names.append(r.find_element(*CustomersLocators.CELL_FIRST_NAME).text)
+        return names
 
-        return {"first_name": first_name, "last_name": last_name, "post_code": post_code}
+    @allure.step("Получить данные из последней строки таблицы")
+    def get_last_row_data(self) -> Dict[str, str]:
+        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
+        last = rows[-1]
+        return {
+            "first_name": last.find_element(*CustomersLocators.CELL_FIRST_NAME).text,
+            "last_name":  last.find_element(*CustomersLocators.CELL_LAST_NAME).text,
+            "post_code":  last.find_element(*CustomersLocators.CELL_POST_CODE).text,
+        }
 
-    @allure.step("Нажать на заголовок 'First Name' для сортировки")
-    def sort_by_first_name(self):
-        self.find_element(ManagerPageLocators.FIRST_NAME_HEADER).click()
-
-    @allure.step("Получить список имен клиентов из таблицы")
-    def get_customer_first_names(self):
-        self.find_element(ManagerPageLocators.CUSTOMERS_TABLE)
-        name_cells = self.find_elements(ManagerPageLocators.ALL_FIRST_NAME)
-        return [cell.text for cell in name_cells]
-
-    @allure.step("Удалить клиента с именем: {customer_name}")
-    def delete_customer(self, customer_name):
-        customer_row = self.find_element(
-            ManagerPageLocators.customer_row_by_text(customer_name)
-        )
-        delete_btn = customer_row.find_element(
-            By.CSS_SELECTOR, "button[ng-click^='deleteCust']"
-        )
-        delete_btn.click()
+    @allure.step("Удалить строку, где имя = {first_name}")
+    def delete_by_first_name(self, first_name: str) -> None:
+        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
+        for row in rows:
+            if row.find_element(*CustomersLocators.CELL_FIRST_NAME).text == first_name:
+                row.find_element(*CustomersLocators.CELL_DELETE_BTN).click()
+                return
