@@ -1,65 +1,32 @@
 import allure
-from typing import List, Dict
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from sdet_practikum.pages.base_page import BasePage
-from sdet_practikum.pages.locators import ManagerPageLocators, CustomersLocators
+from sdet_practikum.pages.locators import ManagerLocators
 
 class ManagerPage(BasePage):
-    path = "/angularJs-protractor/BankingProject/#/manager"
+    """Страница менеджера (общая навигация и Add Customer)."""
 
-    def __init__(self, driver, base_url):
-        super().__init__(driver, base_url, self.path)
+    def __init__(self, driver, base_url, path="/#/manager"):
+        super().__init__(driver, base_url, path)
 
-    # ---- Manager tab ----
-    @allure.step("Нажать на кнопку 'Add Customer'")
-    def click_add_customer_button(self) -> None:
-        self.click_element(ManagerPageLocators.ADD_CUSTOMER_BUTTON)
+    @allure.step("Переход на вкладку 'Add Customer'")
+    def go_to_add_customer(self):
+        self.wait_visible(ManagerLocators.ADD_CUSTOMER_TAB).click()
 
-    @allure.step("Заполнить форму клиента: {first_name} {last_name}, {post_code}")
-    def fill_customer_form(self, first_name: str, last_name: str, post_code: str) -> None:
-        self.fill_field(ManagerPageLocators.FIRST_NAME, first_name)
-        self.fill_field(ManagerPageLocators.LAST_NAME, last_name)
-        self.fill_field(ManagerPageLocators.POST_CODE, post_code)
+    @allure.step("Переход на вкладку 'Customers'")
+    def go_to_customers_list(self):
+        self.wait_visible(ManagerLocators.CUSTOMERS_TAB).click()
 
-    @allure.step("Отправить форму 'Add Customer'")
-    def submit_customer_form(self) -> None:
-        self.click_element(ManagerPageLocators.SUBMIT_BUTTON)
+    @allure.step("Добавление нового клиента: {fname} {lname} {postcode}")
+    def add_customer(self, fname, lname, postcode):
+        self.wait_visible(ManagerLocators.FIRST_NAME_INPUT).send_keys(fname)
+        self.driver.find_element(*ManagerLocators.LAST_NAME_INPUT).send_keys(lname)
+        self.driver.find_element(*ManagerLocators.POST_CODE_INPUT).send_keys(postcode)
+        self.driver.find_element(*ManagerLocators.ADD_CUSTOMER_BTN).click()
 
-    # ---- Customers tab ----
-    @allure.step("Перейти на вкладку 'Customers'")
-    def go_to_customers_tab(self) -> None:
-        self.click_element(ManagerPageLocators.CUSTOMERS_BUTTON)
-        self.find_element(CustomersLocators.CUSTOMERS_TABLE)
-
-    @allure.step("Клик по заголовку First Name для сортировки")
-    def sort_by_first_name(self) -> None:
-        self.click_element(CustomersLocators.HEADER_FIRST_NAME)
-
-    @allure.step("Применить фильтр поиска по имени: {query}")
-    def search_customer(self, query: str) -> None:
-        self.fill_field(CustomersLocators.SEARCH_INPUT, query)
-
-    @allure.step("Получить список имён из таблицы")
-    def get_all_first_names(self) -> List[str]:
-        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
-        names: List[str] = []
-        for r in rows:
-            names.append(r.find_element(*CustomersLocators.CELL_FIRST_NAME).text)
-        return names
-
-    @allure.step("Получить данные из последней строки таблицы")
-    def get_last_row_data(self) -> Dict[str, str]:
-        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
-        last = rows[-1]
-        return {
-            "first_name": last.find_element(*CustomersLocators.CELL_FIRST_NAME).text,
-            "last_name":  last.find_element(*CustomersLocators.CELL_LAST_NAME).text,
-            "post_code":  last.find_element(*CustomersLocators.CELL_POST_CODE).text,
-        }
-
-    @allure.step("Удалить строку, где имя = {first_name}")
-    def delete_by_first_name(self, first_name: str) -> None:
-        rows = self.find_elements(CustomersLocators.TABLE_ROWS)
-        for row in rows:
-            if row.find_element(*CustomersLocators.CELL_FIRST_NAME).text == first_name:
-                row.find_element(*CustomersLocators.CELL_DELETE_BTN).click()
-                return
+        # Ждем и принимаем alert
+        alert = WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert_text = alert.text
+        alert.accept()
+        return alert_text

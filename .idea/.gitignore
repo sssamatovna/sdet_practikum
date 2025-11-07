@@ -1,5 +1,25 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
+# Python cache & artifacts
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Pytest cache
+.pytest_cache/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+.env/
+
+# IDE files (PyCharm)
+.idea/
+
+# Allure reports
+allure-results/
+allure-report/
+
+# Environment variables file
+.env

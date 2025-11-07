@@ -1,0 +1,48 @@
+name: Python UI Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    # Установка Chrome и необходимых зависимостей для Selenium/WebDriver-Manager
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Установка зависимостей из requirements.txt
+        pip install -r requirements.txt
+
+    - name: Install Google Chrome (Necessary for CI)
+      run: |
+        sudo apt-get update
+        sudo apt-get install google-chrome-stable
+
+    - name: Run tests with Allure (and parallel launch -n 2)
+      # Используем 2 параллельных потока для демонстрации -n
+      run: |
+        pytest -n 2 --alluredir=./allure-results
+      env:
+        # Установка переменной окружения для headless-запуска,
+        # если бы вы его использовали (пока не используется в conftest.py)
+        HEADLESS: "true"
+
+    - name: Upload Allure results
+      # Этот шаг сохраняет результаты Allure, чтобы их можно было посмотреть
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-results
+        path: allure-results
