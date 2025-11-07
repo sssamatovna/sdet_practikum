@@ -4,9 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options 
 from webdriver_manager.chrome import ChromeDriverManager
-from pages.manager_page import ManagerPage
-from pages.customers_page import CustomersPage
-from utils import data_generator
+from sdet_practikum.pages.manager_page import ManagerPage
+from sdet_practikum.pages.customers_page import CustomersPage
+from sdet_practikum.prakutils import random_data
 
 
 @pytest.fixture(scope="session")
