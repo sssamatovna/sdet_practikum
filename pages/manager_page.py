@@ -12,21 +12,21 @@ class ManagerPage(BasePage):
 
     @allure.step("Переход на вкладку 'Add Customer'")
     def go_to_add_customer(self):
-        self.wait_visible(ManagerLocators.ADD_CUSTOMER_TAB).click()
+        self.click_element(ManagerLocators.ADD_CUSTOMER_TAB)
 
     @allure.step("Переход на вкладку 'Customers'")
     def go_to_customers_list(self):
-        self.wait_visible(ManagerLocators.CUSTOMERS_TAB).click()
+        self.click_element(ManagerLocators.CUSTOMERS_TAB)
 
     @allure.step("Добавление нового клиента: {fname} {lname} {postcode}")
     def add_customer(self, fname, lname, postcode):
-        self.wait_visible(ManagerLocators.FIRST_NAME_INPUT).send_keys(fname)
-        self.driver.find_element(*ManagerLocators.LAST_NAME_INPUT).send_keys(lname)
-        self.driver.find_element(*ManagerLocators.POST_CODE_INPUT).send_keys(postcode)
-        self.driver.find_element(*ManagerLocators.ADD_CUSTOMER_BTN).click()
+        self.fill_field(ManagerLocators.FIRST_NAME_INPUT, fname)
+        self.fill_field(ManagerLocators.LAST_NAME_INPUT, lname)
+        self.fill_field(ManagerLocators.POST_CODE_INPUT, postcode)
+        self.click_element(ManagerLocators.ADD_CUSTOMER_BTN)
 
         # Ждем и принимаем alert
-        alert = WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert
         alert_text = alert.text
         alert.accept()
         return alert_text

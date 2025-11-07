@@ -1,17 +1,19 @@
 import pytest
+import random
+import allure
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from sdet_practikum.pages.base_page import BasePage
 from sdet_practikum.pages.manager_page import ManagerPage
 from sdet_practikum.utils import random_data
-import random
-import allure
+from sdet_practikum.base_data import BASE_URL
+
 
 
 @pytest.fixture(scope="session")
 def base_url():
-    return "https://www.globalsqa.com/angularJs-protractor/BankingProject"
+    return BASE_URL
 
 
 @pytest.fixture(scope="function")
