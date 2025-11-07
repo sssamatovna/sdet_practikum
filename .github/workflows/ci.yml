@@ -42,7 +42,7 @@ jobs:
 
     - name: Upload Allure results
       # Этот шаг сохраняет результаты Allure, чтобы их можно было посмотреть
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: allure-results
         path: allure-results
