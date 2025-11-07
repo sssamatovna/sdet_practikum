@@ -2,9 +2,9 @@ name: Python UI Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ banking-UI-test ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   test:
