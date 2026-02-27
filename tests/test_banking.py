@@ -97,3 +97,9 @@ class TestBanking:
         with allure.step("Проверить, что клиент исчез из таблицы (без поиска)"):
             names_after = customers_page.get_all_first_names()
             assert target not in names_after, f"ОШИБКА: Клиент '{target}' не был удален из таблицы. Текущие имена: {names_after}"
+
+    @allure.title("Нерабочий тест")
+    @allure.story("TC-004: Падение")
+    @allure.severity(allure.severity_level.NORMAL)
+    def test_xfailed(self):
+       assert 1 == 2
