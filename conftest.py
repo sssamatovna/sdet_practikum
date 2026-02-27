@@ -7,10 +7,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options 
-from sdet_practikum.pages.base_page import BasePage
-from sdet_practikum.pages.manager_page import ManagerPage
-from sdet_practikum.utils import random_data
-from sdet_practikum.base_data import BASE_URL 
+from pages.base_page import BasePage
+from pages.manager_page import ManagerPage
+from utils import random_data
+from base_data import BASE_URL 
 
 
 @pytest.fixture(scope="session")
