@@ -1,8 +1,8 @@
 import allure
-from sdet_practikum.pages.manager_page import ManagerPage
-from sdet_practikum.pages.customers_page import CustomersPage
-from sdet_practikum.utils import random_data
-from sdet_practikum.utils.customer_helper import find_customer_delete
+from pages.manager_page import ManagerPage
+from pages.customers_page import CustomersPage
+from utils import random_data
+from utils.customer_helper import find_customer_delete
 
 @allure.feature("Banking Project - Customer Management")
 class TestBanking:
