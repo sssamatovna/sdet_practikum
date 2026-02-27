@@ -5,7 +5,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from sdet_practikum.settings import DEFAULT_TIMEOUT
+from settings import DEFAULT_TIMEOUT
 
 
 class BasePage:
