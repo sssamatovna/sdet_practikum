@@ -12,6 +12,7 @@ class ManagerPage(BasePage):
 
     @allure.step("Переход на вкладку 'Add Customer'")
     def go_to_add_customer(self):
+        self.open()
         self.click_element(ManagerLocators.ADD_CUSTOMER_TAB)
 
     @allure.step("Переход на вкладку 'Customers'")
