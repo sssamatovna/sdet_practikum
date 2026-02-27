@@ -1,8 +1,8 @@
 import allure
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from sdet_practikum.pages.base_page import BasePage
-from sdet_practikum.pages.locators import ManagerLocators
+from pages.base_page import BasePage
+from pages.locators import ManagerLocators
 
 class ManagerPage(BasePage):
     """Страница менеджера (общая навигация и Add Customer)."""
