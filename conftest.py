@@ -1,5 +1,3 @@
-# conftest.py
-
 import pytest
 import random
 import allure
