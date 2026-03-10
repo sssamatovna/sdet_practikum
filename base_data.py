@@ -1,1 +1,1 @@
-BASE_URL = "https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager"
+BASE_URL = "https://www.globalsqa.com/angularJs-protractor/BankingProject"

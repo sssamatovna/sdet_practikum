@@ -25,7 +25,7 @@ services:
   tests:
     build: .
     environment:
-      - BASE_URL=https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager
+      - BASE_URL=https://www.globalsqa.com
       - REMOTE_URL=http://selenoid:4444/wd/hub
       - ALL_PROXY=socks5://fYEsBB:3rZk9p@196.16.110.153:8000 
       - HTTP_PROXY=socks5://fYEsBB:3rZk9p@196.16.110.153:8000
