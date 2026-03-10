@@ -32,7 +32,7 @@ def driver():
             "selenoid:options",
             {
                 "enableVNC": True,
-                "enableVideo": True
+                "enableVideo": False
             }
         )
         driver = webdriver.Remote(
