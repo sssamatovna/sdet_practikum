@@ -24,6 +24,7 @@ def driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
+    options.add_argument("--proxy-server=socks5://196.16.110.153:8000")
 
     remote_url = os.getenv("REMOTE_URL")
 
