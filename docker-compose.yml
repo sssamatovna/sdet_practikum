@@ -27,9 +27,6 @@ services:
     environment:
       - BASE_URL=https://www.globalsqa.com
       - REMOTE_URL=http://selenoid:4444/wd/hub
-      - ALL_PROXY=socks5://fYEsBB:3rZk9p@196.16.110.153:8000 
-      - HTTP_PROXY=socks5://fYEsBB:3rZk9p@196.16.110.153:8000
-      - HTTPS_PROXY=socks5://fYEsBB:3rZk9p@196.16.110.153:8000
     depends_on:
       - selenoid
     command: pytest -n 3 --alluredir=allure-results --junitxml=xml-report/results.xml
