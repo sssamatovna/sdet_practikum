@@ -32,8 +32,8 @@ class BasePage:
     def _wait_visible(self, locator: Tuple[str, str], timeout: int = DEFAULT_TIMEOUT):
         """Ждет, пока элемент станет видимым, и возвращает его."""
         try:
-            return WebDriverWait(self.driver, timeout).until(
-                EC.visibility_of_element_located(locator)
+            return WebDriverWait(self.driver, 30).until(
+                lambda d: d.execute_script("return document.readyState") == "complete"
             )
         except TimeoutException as e:
             allure.attach(self.driver.get_screenshot_as_png(), name=f"Ошибка ожидания {locator}",

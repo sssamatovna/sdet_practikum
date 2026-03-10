@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    volumes:
+      - "./config:/etc/selenoid"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "4444:4444"
+    command: ["-conf", "/etc/selenoid/browsers.json", "-limit", "4", "-video-output-dir", "/opt/selenoid/video", "-container-network", "ci_network"]
+    networks:
+      - ci_network
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui:latest-release
+    depends_on:
+      - selenoid
+    ports:
+      - "8090:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
+    networks:
+      - ci_network
+
+  tests:
+    build: .
+    environment:
+      - BASE_URL=https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager
+      - REMOTE_URL=http://selenoid:4444/wd/hub
+    depends_on:
+      - selenoid
+    command: pytest -n 3 --alluredir=allure-results --junitxml=xml-report/results.xml
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./xml-report:/app/xml-report
+    networks:
+      - ci_network
+
+networks:
+  ci_network:
+    name: ci_network
