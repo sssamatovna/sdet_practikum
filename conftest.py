@@ -1,41 +1,55 @@
+import os
 import pytest
 import random
 import allure
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options 
 from pages.base_page import BasePage
 from pages.manager_page import ManagerPage
 from utils import random_data
-from base_data import BASE_URL 
-
+from base_data import BASE_URL
 
 @pytest.fixture(scope="session")
 def base_url():
     """Возвращает базовый URL приложения."""
     return BASE_URL
 
+
 @pytest.fixture(scope="function")
 def driver():
-    chrome_options = Options()
-    
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox") # Важно для CI
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=1920,1080") # Задаем размер окна для headless-режима
-    
-    driver = webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()),
-        options=chrome_options 
-    )
-    
-    driver.maximize_window() 
+    options = webdriver.ChromeOptions()
+
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--proxy-server=socks5://196.16.110.153:8000")
+
+    remote_url = os.getenv("REMOTE_URL")
+
+    if remote_url:
+        options.set_capability(
+            "selenoid:options",
+            {
+                "enableVNC": True,
+                "enableVideo": False
+            }
+        )
+        driver = webdriver.Remote(
+            command_executor=remote_url,
+            options=options
+        )
+
+    else:
+        if os.getenv("HEADLESS") == "true":
+            options.add_argument("--headless")
+        driver = webdriver.Chrome(options=options)
+
     driver.implicitly_wait(10)
-    
     yield driver
-    
     driver.quit()
+
 
 @pytest.fixture(scope="function")
 def create_test_customers(driver, base_url):
